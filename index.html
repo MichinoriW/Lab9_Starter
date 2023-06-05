@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "c7b9e916f8cd4b6ab3e73a14d2aad2f5"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
+                        
 
 <head>
   <meta charset="UTF-8">
@@ -88,6 +96,25 @@
   </main>
 
   <script>
+    
+    window.onerror = function(message, source, line, column, error) {
+      console.log('Error occurred:');
+      console.log('Message:', message);
+      console.log('Source:', source);
+      console.log('Line:', line);
+      console.log('Column:', column);
+      console.log('Error Object:', error);
+    };
+
+    //testFunctionForOnError();
+
+    class CalculationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'CalculationError';
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +122,120 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      TrackJS.track('Testing TrackJS!');
+                        
+
+      try {
+        //testFunctionForOnError();
+
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new CalculationError('Invalid input.');
+        }
+
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (error) {
+          output.innerHTML = 'An error occurred: ' + error.message + '\nPlease enter numeric values';
+          console.log(error.name);
+      } finally {
+          console.log('Calculation complete.');
+      }
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    //console.log(errorBtns.length);
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    //Console Log
+    errorBtns[0].addEventListener('click', () => {
+      console.log('Console Log Demo');
+    });
+
+    // Console Error
+    errorBtns[1].addEventListener('click', () => {
+      console.error('Console Error Demo');
+    });
+
+    // Console Table
+    errorBtns[10].addEventListener('click', () => {
+      let data = [
+        { name: 'Software Engineering', num: 110 },
+        { name: 'Programming Languages', num: 130 },
+        { name: 'Advanced Software', num: 112 }
+      ];
+      console.table(data);
+    });
+
+    // Console Dir
+    errorBtns[6].addEventListener('click', () => {
+      console.dir(errorBtns[6]);
+    });
+
+    // Console Dirxml
+    errorBtns[7].addEventListener('click', () => {
+      console.dirxml(errorBtns[7]);
+    });
+
+    // Console Group
+    errorBtns[8].addEventListener('click', () => {
+      console.group('console.group');
+      errorBtns[9].addEventListener('click', () => {
+          console.groupEnd();
+      });
+    });
+
+    // Console Time
+    errorBtns[11].addEventListener('click', () => {
+      console.time('Timer');
+      errorBtns[12].addEventListener('click', () => {
+        console.timeEnd('Timer');
+      });
+    });
+
+    // Console Trace
+    errorBtns[13].addEventListener('click', () => {
+      function deepest() {
+        console.trace();
+      }
+
+      function deeper() {
+        deepest();
+      }
+
+      function deep() {
+        deeper();
+      }
+
+      function handleBtnClick(){
+        deep()
+      }
+
+      handleBtnClick();
+    });
+
+    let count = 1;
+    errorBtns[2].addEventListener('click', () => {
+      console.log('Count Button: ' + count);
+      count++;
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.warn("Console Warn Button");
+    });
+
+    errorBtns[4].addEventListener('click', () => {
+      console.assert(2 === 3, "x should not equal 3");
+    });
+
+    errorBtns[5].addEventListener('click', () => {
+      console.clear();
+    });
+
+    errorBtns[14].addEventListener('click', () => {
+      throw new Error('Sadly an error happened');
+    });
   </script>
 </body>
 
